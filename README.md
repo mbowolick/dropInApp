@@ -1,6 +1,6 @@
 # dropInApp
 
-dropInApp is a small light weight Python3.8 application, written using the Flask python framework as an exercise to explore the Adyen Payment Gateway Drop-In Integration Method.
+dropInApp is a small light weight Python3.8 application, written using the Flask python framework as an exercise to explore the [Adyen Payment Gateway Drop-In Integration Method](https://docs.adyen.com/checkout/drop-in-web)
 
 ![ScreenGrab](dropInApp/static/img/checkout-screengrab.png)
 
