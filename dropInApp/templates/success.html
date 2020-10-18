@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block content %}
+
+
+<div class="row">
+    <div class="column">
+        {% if resultCode %}
+        <h3> ResultCode: {{ resultCode }} </h3>
+        <h4> Payment Reciept:</h4>
+        <p> pspReference: {{ pspReference }} </p>
+        <p> merchantReference: {{ merchantReference }} </p>
+        {% if paymentMethod %} <p> paymentMethod: {{ paymentMethod }} </p> {% endif %}
+        {% else %}
+        <p> No Reciept details :( </p>
+        {% endif %}
+
+        <p>Go home, start again: <a href="{{ url_for('home') }}">home</a>.</p>
+    </div>
+    <div class="column">
+        <div id="result-container">
+        <img id="result-icon" src="{{ url_for('static', filename='img/tick.svg') }}" />
+        </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}

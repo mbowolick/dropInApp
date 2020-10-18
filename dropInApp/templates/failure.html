@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="row">
+    <div class="column">
+        <h3>Mistakes happen, don't let it get you down</h3>
+        <p>Go home, and try again: <a href="{{ url_for('home') }}">home</a></p>
+    </div>
+    <div class="column">
+        <div id="result-container">
+        <img id="result-icon" src="{{ url_for('static', filename='img/wrong.svg') }}" />
+        </div>
+    </div>
+  </div>
+
+{% endblock %}

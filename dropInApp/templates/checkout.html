@@ -1,0 +1,178 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<!-- Adyen JS + CSS-->
+<script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.15.1/adyen.js" integrity="sha384-18bB9irNIu0hQBFN+kxYgjeiMARTx7ukMoeFWLw/Autuyi+w0S9nXsf5Fn/VwmI+" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.13.0/adyen.css" integrity="sha384-AtxcD/Ax9ZRBLJ63s/bwCMrfe/mXWt4TF7F+Vltoxo0WgAwWjVNDsfyMAgY+9nBi" crossorigin="anonymous">
+
+<div id="checkout-body">
+<div class="row">
+    <div class="column">
+      <h2>Select Payment Methods:</h2>
+      <!-- Adyen Container to put dropin conent-->
+      <div id="dropin-container"></div>
+    </div>
+    <div class="column">
+        <div id="summary-block">
+            <h2>Order Summary: </h2>
+            <hr id="summary-break">
+            <div id="summary-table">
+                <table>
+                    <tr>
+                        <td>
+                            <img id="product" src="{{ url_for('static', filename='img/t-shirt.svg') }}" />
+                        </td>
+                        <td>
+                            <div id="product-name">Star T-Shirt</div>
+                            <table id="product-line-table">
+                                <tr>
+                                    <td>Size:</td>
+                                    <td>S</td>
+                                </tr>
+                                <tr>
+                                    <td>Qty:</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>Price:</td>
+                                    <td>$40.00</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    <hr id="summary-break">
+    <div id="totals">
+        <table id="totals-table">
+            <tr>
+                <td>Order Total:</td>
+                <td>$40.00</td>            
+            </tr>
+            <tr>
+                <td>Tax:</td>
+                <td>$4.00 </td>
+            </tr>
+            <tr>
+                <td>Shipping:</td> 
+                <td>$0.00</td>
+            </tr>
+            <tr>
+                <td>Grand Total (AUD): </td>
+                <td>$40.00</td>
+            </tr>
+        </table>
+    </div>
+    </br>
+    </div>
+  </div>
+</div>
+
+
+<!-- Adyen Configuration object -->
+<script>
+    const showFinalState = (response) => {
+        if (response.resultCode === 'Authorised') {
+            resultLocation = "http://localhost:5000/success?"
+            + "pspReference=" + response.pspReference
+            + "&resultCode=" + response.resultCode
+            + "&merchantReference=" + response.merchantReference;
+            window.location.href = resultLocation;   
+        }
+        else {
+            window.location.href = "http://localhost:5000/failed";
+        }
+    };
+    const configuration = {
+        // TROUBLES: Missing comma and paymentMethods response includes "True" but javaScript expects "true"
+        paymentMethodsResponse: {{ paymentMethods|safe }} , 
+        clientKey: {{ clientKey|tojson }}, 
+        locale: "en-AU",
+        environment: "test",
+        onSubmit: (state, dropin) => {
+            /**
+             * TROUBLES: dedicated function makePayment(state.data) to perform fetch caused too much trouble, 
+             * promise chaining issue, causing a fountain of issues to follow:
+             * TROUBLES: Uncaught (in promise) Error: SyntaxError: Unexpected token A in JSON at position 0!!!!!!
+             * TROUBLES: Uncaught (in promise) SyntaxError: Unexpected token ' in JSON at position 1
+             * TROUBLES: Uncaught (in promise) SyntaxError: Unexpected token < in JSON at position 0
+             * Best was just to keep all functions within configuration.onSubmit. 
+             */
+            // TODO: Animate onSubmit
+            // Function calling server to make a `/payments` request
+            fetch('/payments/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(state.data)
+            }).then(response => response.json())
+            .then(response => {
+                    if (response.action) {
+                        /**
+                         * Action required, redirect or input needed. 
+                         * Dropin.HandleAction reviews the action and follows if required
+                         * i.e. Redirects if type = "redirect" 
+                         */                        
+                         dropin.handleAction(response.action); // handleAction handles the redirect
+                    } else {
+                        /**
+                         * No action is required, the payment was successful
+                         * Redirect to success page. 
+                        */
+                        showFinalState(response);
+                    }
+                })
+                .catch(error => {
+                    throw Error(error);
+                });
+            },
+            // onAdditionalDetails:: used for native 3D Secure 2, and for native QR code payment methods.
+            onAdditionalDetails: (state, dropin) => {
+                // Function calling server to make a `/payments/details` request
+                fetch('/payments/details', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':  'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(state.data)
+                }).then(response => response.json())    
+                    .then(response => {
+                        if (response.action) {
+                            /**
+                             * Action required, redirect or input needed. 
+                             * Dropin.HandleAction reviews the action and follows if required
+                             * i.e. Redirects if type = "redirect" or result is "ChallengeShopper"
+                             */  
+                            dropin.handleAction(response.action);
+                        } else {
+                            /**
+                             * No action is required, the payment was successful
+                             * Redirect to success page. 
+                             */
+                             showFinalState(response);
+                        }
+                    })
+                .catch(error => {
+                    throw Error(error);
+                });
+            },
+        paymentMethodsConfiguration: {
+            card: { // Example optional configuration for Cards
+                hasHolderName: true,
+                holderNameRequired: true,
+                enableStoreDetails: false,
+                hideCVC: false, // Change this to true to hide the CVC field for stored cards
+                name: 'Credit or debit card'
+            }
+        }
+    };
+    const checkout = new AdyenCheckout(configuration);
+    const dropin = checkout.create('dropin').mount('#dropin-container');
+</script>
+
+
+{% endblock %}

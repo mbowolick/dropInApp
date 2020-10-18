@@ -1,0 +1,104 @@
+* {
+    font-family: arial;
+    box-sizing: border-box;
+}
+
+#totals {
+    padding-top: 10px;
+    font-size: 20px;
+}​
+
+th,
+td {
+    padding: 2px;
+    text-align: left;
+}
+
+#dropin-container {
+    width: 80%;
+}
+
+#store-logo {
+    width: 6%;
+}
+
+#header {
+    padding-top: 20px;
+    text-align: center;
+    padding-bottom: 18px;
+}
+#header.h1 {
+    font-size: 24px;
+}
+
+hr {
+    width: 1000px;
+}
+
+#main-body,
+#checkout-body {
+    width: 1000px;
+    margin: 9px auto;
+}
+
+.row {
+    text-align: center;
+    width:1000px;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+    text-align: left;
+}
+  
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#summary-block {
+    text-align: left;
+}
+#summary-table {
+    padding-bottom: 2px;
+}
+
+#summary-table td {
+    width: 100px;
+}
+
+#product {
+    width: 85px;
+    padding-top: 5px;
+}
+
+#summary-break {
+    width: 488px;
+}
+
+#product-name {
+    font-size: 22px;
+    padding-left: 3px;
+    padding-bottom: 5px;
+}
+
+#product-line-table {
+    width: 133px;
+}
+
+#totals-table td + td {
+    width: 293px;
+    text-align: right;
+}
+
+#result-icon {
+    width: 225px;
+}
+
+#result-container {
+    text-align: center;
+    padding-top: 10px;
+}
