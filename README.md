@@ -9,8 +9,9 @@ dropInApp is a small light weight Python3.8 application, written using the Flask
 1. Credit Card (Visa - Without 3DS2)
 2. Credit Card (Mastercard - Without 3DS2)
 3. Local Payment - alipay Payment
-4. Credit Card (Visa - 3DS2 (4917 XXXX XXXX XXXX))
-5. Credit Card (Mastercard - 3DS2 (5454 XXXX XXXX XXXX))
+4. Local Payment - POLi Payment
+6. Credit Card (Visa - 3DS2 (4917 XXXX XXXX XXXX))
+7. Credit Card (Mastercard - 3DS2 (5454 XXXX XXXX XXXX))
 
 ## Installation
 
