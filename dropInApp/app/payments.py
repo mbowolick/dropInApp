@@ -1,5 +1,5 @@
 import Adyen
-import dropInApp
+import dropInApp as params
 import json
 
 def getPaymentMethods():
@@ -10,14 +10,14 @@ def getPaymentMethods():
     '''
     adyen = Adyen.Adyen()
     adyen.payment.client.platform = "test"
-    adyen.client.xapikey = dropInApp.checkout_apikey
+    adyen.client.xapikey = params.checkout_apikey
     
     request = {
-        'merchantAccount': dropInApp.merchant_account,
+        'merchantAccount': params.merchant_account,
         'countryCode': 'AU',
         'shopperLocale': 'en-AU',
         'amount': {
-            'value': 40,
+            'value': 4000,
             'currency': 'AUD'
         },
         'channel': 'Web'
@@ -44,16 +44,16 @@ def sendPayment(stateData):
     '''
     adyen = Adyen.Adyen()
     adyen.payment.client.platform = "test"
-    adyen.client.xapikey = dropInApp.checkout_apikey
+    adyen.client.xapikey = params.checkout_apikey
 
     # TROUBLES: had issues with double nesting: paymentMethod: paymentMethod: {} resulting in "422" validation error
     paymentMethod = stateData['paymentMethod']
     
     paymentsRequest = {
-        'merchantAccount': dropInApp.merchant_account,
+        'merchantAccount': params.merchant_account,
         'paymentMethod': paymentMethod, 
         'amount': {
-            'value': 40,
+            'value': 4000,
             'currency': 'AUD'
         },
         'reference': 'matthew_checkoutChallenge',  # Challenge condition "{yourFirstName}_checkoutChallenge"
@@ -91,7 +91,7 @@ def getPaymentsDetails(payLoad):
     '''
     adyen = Adyen.Adyen()
     adyen.payment.client.platform = "test"
-    adyen.client.xapikey = dropInApp.checkout_apikey
+    adyen.client.xapikey = params.checkout_apikey
     
     # TROUBLES: validation error when sending Details request, to be reformatted like so
     # TROUBLES: Each use case will provide the payLoad differently. 

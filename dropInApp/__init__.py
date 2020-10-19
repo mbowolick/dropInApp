@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 from .app.payments import getPaymentMethods, sendPayment, getPaymentsDetails
-from configparser import ConfigParser
+from configparser import RawConfigParser
 
 app = Flask(__name__)
 
 # Read in Config
-parser = ConfigParser()
+parser = RawConfigParser()
 parser.read('params.ini')
 merchant_account = parser['DEFAULT']['merchant_account']
 checkout_apikey = parser['DEFAULT']['checkout_apikey']
